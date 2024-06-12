@@ -193,12 +193,13 @@ S <- ggplot(Subset, aes(x=Median_rank_raw, y=Median_rank_scaled, colour=as.facto
 
 P1 <- ggarrange(All, S, common.legend = T, legend = "right")
 
-## Plot per predictor result of top 10 genes
+## Plot per predictor result of top 10 genes - median scaled
 
 TE <- Named_ranking_merged[,c(1,10:18,20)]
+TE <- TE %>% arrange(Median_rank_scaled)
 TE <- rename(TE, "Median (raw)"="Median_rank_raw", "Median (scaled)"="Median_rank_scaled")
 
-Top_10_dis <- TE %>% filter(`Median (raw)` < 11)
+Top_10_dis <- TE[1:10, ]
 
 Melted_top_10 <-  melt(Top_10_dis, id = c("ID"))
 Melted_top_10$Rank <- Melted_top_10$variable
@@ -216,8 +217,8 @@ ME <- ggplot(Melted_top_10, aes(x=ID, y=Rank, size=value, colour=ID)) +
 
 OU <- ggarrange(P1, ME, nrow = 2)
 
-ggsave(OU, device = "svg", height = 10, width = 12,
-       file="Ranking_of_gene_based_results/Common_var_ranks_final/Top_10_common_gene_rank_v3.svg")
+ggsave(OU, device = "tiff", height = 10, width = 12,
+       file="Ranking_of_gene_based_results/Common_var_ranks_final/Scaled_Top_10_common_gene_rank_v3.tiff")
 
 
 write.table(Ranking_merged, file="Ranking_of_gene_based_results/Common_var_ranks_final/Common_var_raw_median_and_scaled_median_rank.txt",
