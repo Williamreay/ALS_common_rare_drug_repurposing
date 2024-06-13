@@ -213,12 +213,15 @@ ME <- ggplot(Melted_top_10, aes(x=ID, y=Rank, size=value, colour=ID)) +
   theme_bw() +
   xlab(" ") +
   theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1)) +
-  ggtitle("Median rank (raw) < 10")
+  ggtitle("Top scaled median ranks")
 
 OU <- ggarrange(P1, ME, nrow = 2)
 
 ggsave(OU, device = "tiff", height = 10, width = 12,
        file="Ranking_of_gene_based_results/Common_var_ranks_final/Scaled_Top_10_common_gene_rank_v3.tiff")
+
+ggsave(OU, device = "svg", height = 10, width = 12,
+       file="Ranking_of_gene_based_results/Common_var_ranks_final/Scaled_Top_10_common_gene_rank_v3.svg")
 
 
 write.table(Ranking_merged, file="Ranking_of_gene_based_results/Common_var_ranks_final/Common_var_raw_median_and_scaled_median_rank.txt",
