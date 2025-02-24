@@ -198,11 +198,11 @@ hist(Ranking_merged_v2$Number_non_missing_rnks, xlab = "Non missing ranks", main
 Ranking_merged_v2$Median_rank_scaled <- (Ranking_merged_v2$Median_rank_raw/Ranking_merged_v2$Number_non_missing_rnks)
 
 ## sample estimates: rho 0.9541308
-
+cbPalette <- c("#E69F00", "#56B4E9", "#F0E442", "#0072B2", "#CC79A7", "#D2B48C", "#8B4513", "#800080", "#4682B4", "#FFD700")
 All <- ggplot(Ranking_merged_v2, aes(x=Median_rank_raw, y=Median_rank_scaled, colour=as.factor(Number_non_missing_rnks))) +
   geom_point(size = 1) +
   theme_bw() + xlab("Median rank (raw)") + ylab("Median rank (scaled by # of non-missing ranks)") +
-  scale_color_brewer(palette = "Dark2") +
+  scale_color_manual(values = cbPalette) +
   labs(colour="# of non-missing ranks") +
   theme(legend.position = "bottom") +
   ggtitle("All genes")
@@ -211,7 +211,7 @@ Subset <- Ranking_merged_v2 %>% filter(Median_rank_raw < 50)
 
 S <- ggplot(Subset, aes(x=Median_rank_raw, y=Median_rank_scaled, colour=as.factor(Number_non_missing_rnks))) +
   geom_point(size = 1) +
-  theme_bw() + xlab("Median rank (raw)") + ylab(" ") +
+  theme_bw() + xlab("Median rank (raw)") + ylab("Median rank (scaled by # of non-missing ranks)") +
   scale_color_manual(values = c("#d95f02", "#e6ab02", "#666666")) +
   labs(colour="# of non-missing ranks") +
   theme(legend.position = "bottom") +
@@ -236,21 +236,18 @@ Top_10_dis <- TE %>% filter(`Median (raw)` < 11)
 Melted_top_10 <-  melt(Top_10_dis, id = c("Gene"))
 Melted_top_10$Rank <- Melted_top_10$variable
 
-ME <- ggplot(Melted_top_10, aes(x=Gene, y=Rank, size=value, colour=Gene)) +
-  geom_point() +
+ME_1 <- ggplot(Melted_top_10, aes(x=Gene, y=Rank, size=value)) +
+  geom_point(colour="black") +
   scale_size(name = "Rank",
              breaks = c(10, 50, 100, 1000, 5000, 10000, 15000)) +
   scale_color_aaas() +
   guides(colour="none") +
   theme_bw() +
-  xlab(" ") +
+  xlab("Gene") +
   theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1)) +
   ggtitle("Median rank (raw) < 10")
 
-OU <- ggarrange(P1, ME, nrow = 2)
 
-ggsave(OU, device = "svg", height = 10, width = 12,
-       file="Rare_var_ranks_final/Rare_variant_raw_median_rank_less_than_10.svg")
 
 
 write.table(Ranking_merged_v2, file="Rare_var_ranks_final/Rare_var_raw_median_and_scaled_median_rank.txt",
@@ -263,12 +260,20 @@ Top_10_sc <- TE %>% filter(`Median (scaled)` < 11)
 Melted_top_10 <-  melt(Top_10_sc, id = c("Gene"))
 Melted_top_10$Rank <- Melted_top_10$variable
 
-ME <- ggplot(Melted_top_10, aes(x=Gene, y=Rank, size=value, colour=Gene)) +
-  geom_point() +
+ME <- ggplot(Melted_top_10, aes(x=Gene, y=Rank, size=value)) +
+  geom_point(colour="black") +
   scale_size(name = "Rank",
              breaks = c(10, 50, 100, 1000, 5000, 10000, 15000)) +
   guides(colour="none") +
   theme_bw() +
-  xlab(" ") +
+  xlab("Gene") +
   theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1)) +
   ggtitle("Median rank (scaled) < 10")
+
+OU <- ggarrange(P1, ME_1, ME, nrow = 3)
+
+ggsave(OU, device = "svg", height = 10, width = 12,
+       file="Rare_var_ranks_final/UPDATED_2025_Rare_variant_raw_median_rank_less_than_10.svg")
+
+ggsave(OU, device = "tiff", height = 10, width = 12,
+       file="Rare_var_ranks_final/UPDATED_2025_Rare_variant_raw_median_rank_less_than_10.tiff")

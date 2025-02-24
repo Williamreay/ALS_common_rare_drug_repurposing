@@ -17,6 +17,7 @@ library(ggsci)
 library(ggpubr)
 library(corrplot)
 library(forcats)
+library(gprofiler2)
 
 setwd("~/Desktop/Zac_MND_project/Ranking_of_gene_based_results/")
 
@@ -40,6 +41,22 @@ Common_rank <- rename(Common_rank, "MAGMA"="MAGMA_rank", "mBAT"="mBAT_rank",
 
 Merged_com_rar <- merge(Common_rank, Rare_rank, by="Gene")
 
+## Top 5% of scaled common var rank
+
+quantile(Merged_com_rar$`Common - Median (scaled)`, 0.05)
+
+Top_5_per_cmr <- Merged_com_rar %>% filter(`Common - Median (scaled)` < 180.6)
+
+CM <- gost(Top_5_per_cmr$Gene, sources = c("GO:MF", "GO:BP", "REAC", "KEGG", "WP"))
+
+quantile(Merged_com_rar$`Rare - Median (scaled)`, 0.05)
+
+Top_5_per_rmr <- Merged_com_rar %>% filter(`Common - Median (scaled)` < 157.5625)
+
+RM <- gost(Top_5_per_rmr$Gene, sources = c("GO:MF", "GO:BP", "REAC", "KEGG", "WP"))
+
+## Nothing much here
+
 ## Correlation plot
 
 Corr_in <- Merged_com_rar %>% select(`Common - Median (raw)`, `Rare - Median (raw)`,
@@ -62,6 +79,11 @@ v2_corr <- corrplot(MAT, method="color", col=col(200), order="hclust", type ="fu
                     p.mat = p.mat, sig.level = 0.05, insig = "blank",
                     diag=T)
 
+Merged_com_rar$Common_quant <- ntile(Merged_com_rar$`Common - Median (scaled)`, 10)
+
+
+
+
 ## Look at lowly ranked genes annotated Tchem or Tclin
 
 TCRD <- fread("../Target_annot_pharmacological/TCRDv6.1.0_ALLexp.csv", header = T)
@@ -83,19 +105,37 @@ Tclin <- TCRD_merge %>% filter(TDL == "Tclin") %>% arrange(`Common - Median (raw
 
 head(Tclin %>% arrange(`Rare - Median (scaled)`))
 
+head(Tclin %>% arrange(`Common - Median (scaled)`))
 
-TCRD_merge_2 <- TCRD_merge %>% filter(`Common - Median (raw)` < 500 & `Rare - Median (raw)` < 500)
+## Find top 5% of scaled distribution for each
 
-## Modal
+quantile(TCRD_merge$`Common - Median (scaled)`, 0.05)
+## 169.9
+quantile(TCRD_merge$`Rare - Median (scaled)`, 0.05)
+## 158.86
 
-ggplot(Tclin, aes(x=`Common - Median (raw)`, y=`Rare - Median (raw)`, colour=TDL)) +
+## Just common
+
+TCRD_merge_cmr <- TCRD_merge %>% filter(`Common - Median (scaled)` < 170)
+
+TCRD_merge_rmr <- TCRD_merge %>% filter(`Rare - Median (scaled)` < 159)
+
+
+TCRD_merge_both <- TCRD_merge %>% filter(`Common - Median (scaled)` < 170 & `Rare - Median (scaled)` < 159)
+
+## Lowly ranked for both
+
+library(viridis)
+
+ggplot(TCRD_merge_both, aes(x=`Common - Median (scaled)`, y=`Rare - Median (scaled)`, colour=TDL)) +
   geom_point() +
-  scale_color_nejm() +
+  scale_color_viridis(discrete = T, option = "turbo") +
   theme_bw() +
-  geom_hline(yintercept = 50, lty="dashed", colour="black") +
-  geom_vline(xintercept = 50, lty="dashed", colour="black") +
-  ggtitle("Median (raw) - rare vs common")
-  
+  ggtitle("Median (scaled) - rare vs common") +
+  facet_wrap(~TDL) +
+  xlab("Common - Median (scaled rank)") +
+  ylab("Rare - Median (scaled rank)")
+
 
 TCRD_merge_3 <- TCRD_merge %>% arrange(`Common - Median (scaled)`)
 TCRD_merge_3 <- TCRD_merge_3[1:500, ]

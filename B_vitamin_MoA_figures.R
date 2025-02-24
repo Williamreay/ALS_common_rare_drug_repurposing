@@ -15,6 +15,7 @@ library(ggsci)
 library(RColorBrewer)
 library(ggrepel)
 library(ggpubr)
+library(viridis)
 ## Read in rare variant ranks
 
 Rmr <- fread("../../Rare_var_ranks_final/Rare_var_raw_median_and_scaled_median_rank.txt")
@@ -34,12 +35,14 @@ R_B <- ggplot(B_merge, aes(x=B_vitamin, y=Median_rank_scaled)) +
              colour="black",pch=21, size=2.5, alpha = 0.7, width = 0.15) + 
   geom_hline(yintercept = 100, lty = "dashed", colour="firebrick2") +
   geom_hline(yintercept = 679, lty = "dashed") +
-  scale_fill_brewer(palette = "Dark2") +
+  scale_fill_viridis(discrete = T, option ="C") +
   theme_bw() + xlab(" ") +  theme(legend.position = "none") + ylab("Rare scaled median rank") +
   geom_text_repel(data=subset(B_merge, Gene=="DGAT2"),
             label="DGAT2", colour="black") +
   geom_text_repel(data=subset(B_merge, Gene=="HCAR3"),
-                  label="HCAR3", colour="black")
+                  label="HCAR3", colour="black") +
+  geom_text_repel(data=subset(B_merge, Gene=="MUT"),
+                  label="MMUT", colour="black")
 
 
 ## Volcano plot of MoA rare variant results for panel a
@@ -56,8 +59,10 @@ Panel_A <- ggplot(MoA_GSEA, aes(y=-log10(`FWER p-val`), x=NES)) +
   ylab("-log10 (FWER)") +
   geom_vline(xintercept = 0, lty="dashed")
 
-ggarrange(Panel_A, R_B, ncol = 2)
+OUT <- ggarrange(Panel_A, R_B, ncol = 2)
 
+ggsave(OUT, device = "svg", file = "~/Desktop/Zac_MND_project/MANUSCRIPT/Updated_B_vit.svg",
+       width = 350, height = 125, limitsize = F, units="mm")
 
   
        

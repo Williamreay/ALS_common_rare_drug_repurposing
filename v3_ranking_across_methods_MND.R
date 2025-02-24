@@ -173,20 +173,22 @@ Ranking_merged$Median_rank_scaled <- (Ranking_merged$Median_rank_raw/Ranking_mer
 
 ## sample estimates: rho 0.832221 
 
+cbPalette <- c("#E69F00", "#56B4E9", "#F0E442", "#0072B2", "#CC79A7", "#D2B48C", "#8B4513", "#800080", "#4682B4", "#FFD700")
+
 All <- ggplot(Ranking_merged, aes(x=Median_rank_raw, y=Median_rank_scaled, colour=as.factor(Number_non_missing_rnks))) +
   geom_point(size = 1) +
   theme_bw() + xlab("Median rank (raw)") + ylab("Median rank (scaled by # of non-missing ranks)") +
-  scale_color_brewer(palette = "Paired") +
+  scale_color_manual(values = cbPalette) +
   labs(colour="# of non-missing ranks") +
   theme(legend.position = "bottom") +
   ggtitle("All genes")
 
 Subset <- Ranking_merged %>% filter(Median_rank_raw < 50)
 
-S <- ggplot(Subset, aes(x=Median_rank_raw, y=Median_rank_scaled, colour=as.factor(Number_non_missing_rnks))) +
+S <- ggplot(Subset, aes(x=Median_rank_raw, y=Median_rank_scaled, fill=as.factor(Number_non_missing_rnks))) +
   geom_point(size = 1) +
-  theme_bw() + xlab("Median rank (raw)") + ylab(" ") +
-  scale_color_brewer(palette = "Paired") +
+  theme_bw() + xlab("Median rank (raw)") + ylab("Median rank (scaled by # of non-missing ranks)") +
+  scale_color_manual(values = cbPalette) +
   labs(colour="# of non-missing ranks") +
   theme(legend.position = "bottom") +
   ggtitle("Top 50 genes (raw)")
@@ -204,24 +206,23 @@ Top_10_dis <- TE[1:10, ]
 Melted_top_10 <-  melt(Top_10_dis, id = c("ID"))
 Melted_top_10$Rank <- Melted_top_10$variable
 
-ME <- ggplot(Melted_top_10, aes(x=ID, y=Rank, size=value, colour=ID)) +
-  geom_point() +
+ME <- ggplot(Melted_top_10, aes(x=ID, y=Rank, size=value)) +
+  geom_point(colour="black") +
   scale_size(name = "Rank",
              breaks = c(10, 50, 100, 1000, 5000, 10000, 15000)) +
-  scale_color_aaas() +
+  #scale_color_viridis(discrete = T, option = "A") +
   guides(colour="none") +
   theme_bw() +
-  xlab(" ") +
+  xlab("Gene") +
   theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1)) +
   ggtitle("Top scaled median ranks")
 
 OU <- ggarrange(P1, ME, nrow = 2)
 
-ggsave(OU, device = "tiff", height = 10, width = 12,
-       file="Ranking_of_gene_based_results/Common_var_ranks_final/Scaled_Top_10_common_gene_rank_v3.tiff")
+
 
 ggsave(OU, device = "svg", height = 10, width = 12,
-       file="Ranking_of_gene_based_results/Common_var_ranks_final/Scaled_Top_10_common_gene_rank_v3.svg")
+       file="Ranking_of_gene_based_results/NEW_Common_var_ranks_final.svg")
 
 
 write.table(Ranking_merged, file="Ranking_of_gene_based_results/Common_var_ranks_final/Common_var_raw_median_and_scaled_median_rank.txt",
