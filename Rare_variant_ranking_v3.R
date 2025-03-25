@@ -244,8 +244,9 @@ ME_1 <- ggplot(Melted_top_10, aes(x=Gene, y=Rank, size=value)) +
   guides(colour="none") +
   theme_bw() +
   xlab("Gene") +
-  theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1)) +
-  ggtitle("Median rank (raw) < 10")
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=0.5, size = 12)) +
+  ggtitle("Median rank (raw) < 10") +
+  theme(axis.text.y = element_text(size = 9))
 
 
 
@@ -267,13 +268,14 @@ ME <- ggplot(Melted_top_10, aes(x=Gene, y=Rank, size=value)) +
   guides(colour="none") +
   theme_bw() +
   xlab("Gene") +
-  theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1)) +
-  ggtitle("Median rank (scaled) < 10")
+  theme(axis.text.x = element_text(size=12, angle=70, vjust=0.7, hjust=0.7)) +
+  ggtitle("Median rank (scaled) < 10") +
+  theme(axis.text.y = element_text(size = 9))
 
 OU <- ggarrange(P1, ME_1, ME, nrow = 3)
 
 ggsave(OU, device = "svg", height = 10, width = 12,
-       file="Rare_var_ranks_final/UPDATED_2025_Rare_variant_raw_median_rank_less_than_10.svg")
+       file="Rare_var_ranks_final/MARCH_UPDATED_2025_Rare_variant_raw_median_rank_less_than_10.svg")
 
 ggsave(OU, device = "tiff", height = 10, width = 12,
        file="Rare_var_ranks_final/UPDATED_2025_Rare_variant_raw_median_rank_less_than_10.tiff")

@@ -123,16 +123,16 @@ ggplot(data = NEK1_eQTL_MR,
   geom_hline(yintercept = -log10(4.14e-5), lty = "dashed") +
   labs(x = expression("Log odds per SD decrease in brain NEK1 expression"), y = expression(paste("-log"[10], " P-value"))) +
   theme_bw() +
-  theme(legend.position ="bottom") +
-  guides(colour=guide_legend(ncol=3)) +
+  theme(legend.position ="right", legend.text = element_text(size=12)) +
+  guides(colour=guide_legend(ncol=1)) +
   geom_vline(xintercept = 0, lty = "dashed") +
   ggtitle("NEK1 downregulation pheWAS (nominally significant traits)") +
   geom_text(data=subset(NEK1_eQTL_MR, phenotype=="Soft tissue disorders"),
-            label = "Soft tissue disorder, MR-pvalue = 0.0005", colour="black", nudge_x = 0.44) +
+            label = "Soft tissue disorder, MR-pvalue = 0.0005", colour="black", nudge_x = 0.5, nudge_y = 0.1) +
   geom_text(data=subset(NEK1_eQTL_MR, phenotype=="Pain in limb"),
-            label = "Pain in limb, MR-pvalue = 0.001", colour="black", nudge_x = 0.35) +
+            label = "Pain in limb, MR-pvalue = 0.001", colour="black", nudge_x = 0.35, nudge_y = 0.1) +
   geom_text(data=subset(NEK1_eQTL_MR, phenotype=="Polycythaemia vera"),
-            label = "Polycythaemia vera, MR-pvalue = 0.003", colour="black", nudge_x = 0.3, nudge_y = 0.2) +
+            label = "Polycythaemia vera, MR-pvalue = 0.003", colour="black", nudge_x = 0.7, nudge_y=0.1) +
   scale_colour_viridis(discrete = T, option = "B")
   
   

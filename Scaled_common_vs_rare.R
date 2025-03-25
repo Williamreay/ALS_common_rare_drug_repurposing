@@ -210,8 +210,12 @@ mycolours <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442",
                "#0072B2", "#D55E00", "#CC79A7", "#66CCEE", "#AA4499", 
                "#44AA99", "#999933", "#882255", "#661100")
 
+PLT$ATC_name <- as.factor(PLT$ATC_name)
+
+library(viridis)
+
 MP <- ggplot(PLT, aes(x=ATC_letter, y=-log10(`FDR q-val`), colour=ATC_name)) +
-  geom_point() +
+  geom_point(alpha = 0.8) +
   theme_bw() +
   geom_hline(yintercept = 1.30, lty="dashed") +
   ggtitle("ATC level 4 - common median (scaled)") +
@@ -219,9 +223,11 @@ MP <- ggplot(PLT, aes(x=ATC_letter, y=-log10(`FDR q-val`), colour=ATC_name)) +
   xlab("ATC") + ylab("-log10(FDR q-value)") +
   geom_text(data=subset(PLT, Term=="L01EC"),
             label="BRAF inhibitors: NES=-2.14, qval = 0.008", colour="black", nudge_x = -2.2) +
-  scale_colour_manual(values = mycolours)
+  #scale_colour_manual(values = mycolours) +
+  #scale_shape_manual(values=1:14)
+  scale_colour_manual(values = c("black", viridis::viridis(13)))
 
 OUT <- ggarrange(MP, Panel_1, BP, nrow = 3)
 
-ggsave("../../UPDATED_REVISION_Fig_3.svg", OUT, device = "svg", 
+ggsave("../../MARCH_NEW_COLOUR_SCHEME_UPDATED_REVISION_Fig_3.svg", OUT, device = "svg", 
        width = 15, height = 10)
